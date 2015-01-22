@@ -1,3 +1,9 @@
+# mac
+.DS_store
+
+# build
 target
+
+# idea
 .idea
 *.iml

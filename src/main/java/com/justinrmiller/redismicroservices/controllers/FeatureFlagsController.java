@@ -1,7 +1,8 @@
 package com.justinrmiller.redismicroservices.controllers;
 
-import com.justinrmiller.redismicroservices.pojo.Feature;
-import com.justinrmiller.redismicroservices.service.FeatureFlagsService;
+import com.google.common.base.Optional;
+
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+
+import com.justinrmiller.redismicroservices.pojo.Feature;
+import com.justinrmiller.redismicroservices.service.FeatureFlagsService;
 
 /**
  * @author Justin Miller (Copyright 2015)
@@ -28,11 +32,18 @@ public class FeatureFlagsController {
             method = RequestMethod.GET,
             produces = "application/json; charset=utf-8")
     @ResponseBody
-    public Feature get(
+    public ResponseEntity get(
             @PathVariable String application,
             @PathVariable String feature) throws IOException {
         logger.info("Getting a feature flag");
-        return featureFlagsService.get(application, feature);
+
+        Optional<Feature> featureOptional = featureFlagsService.get(application, feature);
+
+        if (featureOptional.isPresent()) {
+            return new ResponseEntity<>(featureOptional.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(
@@ -40,10 +51,17 @@ public class FeatureFlagsController {
             method = RequestMethod.GET,
             produces = "application/json; charset=utf-8")
     @ResponseBody
-    public List<Feature> get(
+    public ResponseEntity get(
             @PathVariable String application) throws IOException {
         logger.info("Getting all feature flags");
-        return featureFlagsService.getAll(application);
+
+        Optional<ImmutableList<Feature>> featureFlagOptional = featureFlagsService.getAll(application);
+
+        if (featureFlagOptional.isPresent()) {
+            return new ResponseEntity<>(featureFlagOptional.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(
