@@ -6,5 +6,5 @@ slides/ - the slides
 
 Prereqs:
     - A running Redis instance (localhost)
-    - Java 1.8
+    - Java 1.7
     - Maven
